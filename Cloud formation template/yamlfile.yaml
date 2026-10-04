@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Self-Service EC2 Server using AWS Service Catalog
+
+Parameters:
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+    Description: Select the EC2 instance type
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Select an existing EC2 key pair
+
+Resources:
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for self-service EC2 server
+      Tags:
+        - Key: Name
+          Value: ServiceCatalog-SecurityGroup
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d27e0fb3bac4d724
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: ServiceCatalog-EC2
+
+Outputs:
+
+  InstanceId:
+    Description: ID of the EC2 instance
+    Value: !Ref EC2Instance
+
+  SecurityGroupId:
+    Description: ID of the security group
+    Value: !Ref SecurityGroup
+
+  InstanceType:
+    Description: EC2 instance type selected
+    Value: !Ref InstanceType
